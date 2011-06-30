@@ -19,9 +19,10 @@ urlpatterns = (basePatterns
     (r'^geocamLens/', include('geocamLens.urls')),
     (r'^geocamTrack/', include('geocamTrack.urls')),
 
-
+    """
     (r'^$', 'django.views.generic.simple.redirect_to',
      {'url': settings.SCRIPT_NAME + 'geocamAware/',
       'readOnly': True}
      ),
+    """
 ))

@@ -1,20 +1,20 @@
 [submodule "submodules/geocamUtilWeb"]
 	path = submodules/geocamUtilWeb
-	url = git://github.com/geocam/geocamUtilWeb.git
+	url = git@github.com:geocam/geocamUtilWeb.git
 
 [submodule "submodules/geocamAwareWeb"]
 	path = submodules/geocamAwareWeb
-	url = git://github.com/geocam/geocamAwareWeb.git
+	url = git@github.com:geocam/geocamAwareWeb.git
 
 [submodule "submodules/geocamLensWeb"]
 	path = submodules/geocamLensWeb
-	url = git://github.com/geocam/geocamLensWeb.git
+	url = git@github.com:geocam/geocamLensWeb.git
 [submodule "submodules/geocamCoreWeb"]
 	path = submodules/geocamCoreWeb
 	url = git@github.com:geocam/geocamCoreWeb.git
 [submodule "submodules/geocamTrackWeb"]
 	path = submodules/geocamTrackWeb
-	url = git://github.com/geocam/geocamTrackWeb.git
+	url = git@github.com:geocam/geocamTrackWeb.git
 [submodule "submodules/geocamFolderWeb"]
 	path = submodules/geocamFolderWeb
-	url = git://github.com/geocam/geocamFolderWeb.git
+	url = git@github.com:geocam/geocamFolderWeb.git
