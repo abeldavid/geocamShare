@@ -13,9 +13,11 @@ if 'bootstrap' in sys.argv:
     extraArgs = sys.argv[2:]
 else:
     extraArgs = []
-bootstrapResult = os.spawnl(os.P_WAIT, sys.executable, sys.executable,
-                            '%s/management/bootstrap.py' % os.path.dirname(__file__),
-                            *extraArgs)
+ret = os.spawnl(os.P_WAIT, sys.executable, sys.executable,
+                '%s/management/bootstrap.py' % os.path.dirname(__file__),
+                *extraArgs)
+if ret != 0:
+    sys.exit(ret)
 
 from django.core.management import execute_manager
 try:
@@ -27,6 +29,3 @@ except ImportError:
 
 if __name__ == "__main__":
     execute_manager(settings)
-
-if bootstrapResult != 0:
-    print '\nYou may want to "source sourceme.sh" to set up the geocamShare environment'

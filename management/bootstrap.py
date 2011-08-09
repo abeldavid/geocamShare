@@ -140,7 +140,7 @@ def linkSubmodules(opts):
 
 def hasRequirements(reqsFile):
     for line in file(reqsFile, 'r'):
-        if not re.match(r'\s+(\#.*)?', line):
+        if not re.match(r'^\s*(\#.*)?$', line):
             return True
     return False
 
@@ -260,7 +260,6 @@ def doit(opts, args):
 
     from geocamShare.djangoWsgi import getEnvironmentFromSourceMe
     getEnvironmentFromSourceMe()
-    sys.exit(1)
 
 def main():
     import optparse
