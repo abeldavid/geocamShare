@@ -44,23 +44,10 @@ in the instructions below::
 Get the Source
 ~~~~~~~~~~~~~~
 
-Visit the `GeoCam Share repository on GitHub`_, click on the Downloads_
-button, and click on "Download .tar.gz" to get a tarball.  Then drop the
-tarball into the ``$GEOCAM_DIR`` directory and run::
+Check out our latest source revision with::
 
   cd $GEOCAM_DIR
-  tar xfz geocam-geocamShare-*.tar.gz
-  # rename the resulting directory to "geocamShare"
-  mv `ls -d geocam-geocamShare-* | head -1` geocamShare
-
-.. _GeoCam Share repository on GitHub: http://github.com/geocam/geocamShare/
-.. _Downloads: http://github.com/geocam/geocamShare/archives/master
-
-**Advanced version:** If you're interested in contributing code to GeoCam
-Share, you can check out our latest revision with::
-
-  cd $GEOCAM_DIR
-  git clone http://github.com/geocam/geocamShare.git geocamShare
+  git clone git://github.com/geocam/geocamShare.git geocamShare
 
 For more information on the Git version control system, visit `the Git home page`_.
 You can install Git on Ubuntu with::
@@ -94,8 +81,8 @@ interpreter will know how to import packages installed in your sandbox.
 You'll need to source the ``activate`` script every time you log in
 to reactivate the sandbox.
 
-Install Dependencies
-~~~~~~~~~~~~~~~~~~~~
+Install Non-Python Packages
+~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 First install Ubuntu packages::
 
@@ -108,27 +95,16 @@ First install Ubuntu packages::
   # rendering icons and reading image metadata
   sudo apt-get install libjpeg-dev libimage-exiftool-perl imagemagick
 
-Then install Python dependencies.  For this command to work, you will
-either need to make sure your virtualenv environment is activated (as
-explained above, recommended) or run with ``sudo``::
-
-  pip install -r $GEOCAM_DIR/geocamShare/make/pythonRequirements.txt
-
 Set Up GeoCam Share
 ~~~~~~~~~~~~~~~~~~~
 
-To render icons and collect media for the server, run::
+To install Python dependencies, render icons and collect media for the
+server, run::
 
   cd $GEOCAM_DIR/geocamShare
-  python setup.py install
-
-Note that, maybe confusingly, this is not a standard Python install
-script.  The action it takes is more like "build" than "install".  It
-does not modify anything outside the ``geocamShare`` directory.
-
-To set up your shell environment to run Share::
-
+  ./manage.py bootstrap --yes
   source $GEOCAM_DIR/geocamShare/sourceme.sh
+  ./manage.py prep
 
 You'll need to source the ``sourceme.sh`` file every time you open a new
 shell if you want to run Share-related Python scripts such as starting
@@ -149,10 +125,10 @@ Import Sample Data
 
 To download and import 37 sample photos::
 
-  cd $GEOCAM_DIR
+  cd $GEOCAM_DIR/geocamShare
   curl http://geocamshare.org/downloads/geocamShareSampleData.tar.gz -O
   tar xfz geocamShareSampleData.tar.gz
-  python geocamDisasterStyle/simpleImport.py --user root geocamShareSampleData
+  python apps/geocamLens/bin/simpleImport.py --user=root geocamShareSampleData/*
 
 You can also clean out all the photos in the database by running
 ``simpleImport.py`` with the ``-c`` "clean" option.  This is handy if
