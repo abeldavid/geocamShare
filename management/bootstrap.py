@@ -215,6 +215,7 @@ def doAction(opts, action):
             logging.info('Would skip %s, status is %s, but running in retry mode' % (action['name'], status))
         else:
             logging.info('Skipping step %s, status is %s' % (action['name'], status))
+            return
     
     # confirm with user
     if (opts.retry or action.has_key('confirm')) and not getConfirmation(opts, action['desc']):
@@ -255,7 +256,10 @@ def doit(opts, args):
     # mark overall completion
     writeFileMakeDir(STATUS_PATH_TEMPLATE % 'bootstrap', 'DONE')
 
-    print '\nFinished bootstrapping... you may need to run "source sourceme.sh" and run manage.py again'
+    print '\nFinished bootstrapping\n'
+
+    from geocamShare.djangoWsgi import getEnvironmentFromSourceMe
+    getEnvironmentFromSourceMe()
     sys.exit(1)
 
 def main():
