@@ -128,7 +128,7 @@ To download and import 37 sample photos::
   cd $GEOCAM_DIR/geocamShare
   curl http://geocamshare.org/downloads/geocamShareSampleData.tar.gz -O
   tar xfz geocamShareSampleData.tar.gz
-  python apps/geocamLens/bin/simpleImport.py --user=root geocamShareSampleData/*
+  python apps/geocamLens/bin/simpleImport.py --user=root geocamShareSampleData/
 
 You can also clean out all the photos in the database by running
 ``simpleImport.py`` with the ``-c`` "clean" option.  This is handy if
