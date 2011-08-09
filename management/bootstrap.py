@@ -44,11 +44,11 @@ ACTIONS = (dict(name='gitInitSubmodules',
            dict(name='linkSubmodules',
                 desc='Link submodules into apps directory',
                 confirm=True),
-           dict(name='installSiteRequirements',
-                desc='Install Python modules listed in the site-level requirements',
-                confirm=True),
            dict(name='installSubModuleRequirements',
                 desc='Install Python modules listed in the requirements for each submodule',
+                confirm=True),
+           dict(name='installSiteRequirements',
+                desc='Install Python modules listed in the site-level requirements',
                 confirm=True),
            dict(name='genSourceme',
                 needed='needSourceme',
@@ -155,12 +155,12 @@ def installRequirements(reqsFile):
     else:
         logging.info('requirements file %s is empty' % reqsFile)
     
-def installSiteRequirements(opts):
-    installRequirements('management/siteRequirements.txt')
-
 def installSubModuleRequirements(opts):
     for reqs in glob('submodules/*/requirements.txt'):
         installRequirements(reqs)
+
+def installSiteRequirements(opts):
+    installRequirements('management/siteRequirements.txt')
 
 def needSourceme(opts):
     return not os.path.exists(SOURCEME_NAME)
