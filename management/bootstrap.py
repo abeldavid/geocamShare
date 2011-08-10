@@ -258,6 +258,7 @@ def doit(opts, args):
 
     print '\nFinished bootstrapping\n'
 
+    sys.path.insert(0, os.path.dirname(opts.siteDir))
     from geocamShare.djangoWsgi import getEnvironmentFromSourceMe
     getEnvironmentFromSourceMe()
 
