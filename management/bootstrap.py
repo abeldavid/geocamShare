@@ -102,7 +102,7 @@ def fillTemplate(inputFile, outputFile, context):
         logging.warning('WARNING: File %s exists, not overwriting. Move current version out of the way to regenerate' % outputFile)
         return
 
-    logging.info('generating %s' % SETTINGS_NAME)
+    logging.info('generating %s' % outputFile)
 
     from django.template import Template, Context
     from django.conf import settings
@@ -168,7 +168,7 @@ def needSourceme(opts):
 def genSourceme(opts):
     fillTemplate('management/templates/%s' % SOURCEME_NAME,
                  SOURCEME_NAME,
-                 dict(virtualEnvDir=os.environ.get('VIRTUALENV', None),
+                 dict(virtualEnvDir=os.environ.get('VIRTUAL_ENV', None),
                       parentDir=os.path.dirname(os.path.abspath(os.getcwd())),
                       appsDir=os.path.abspath('apps')
                       ))
