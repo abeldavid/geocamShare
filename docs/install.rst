@@ -28,8 +28,9 @@ We have also successfully installed parts of GeoCam Share on RedHat
 Enterprise Linux 5.5, Mac OS X 10.6 (Snow Leopard), and an Ubuntu
 virtual machine running under VMWare on a Windows host.  However, we do
 not officially support those platforms.  Our installation instructions
-below mostly assume Ubuntu, so if you want to use another platform you
-may need to improvise more during installation.
+below assume Ubuntu. We also have `tips for other operating systems`_.
+
+.. _tips for other operating systems: http://github.com/geocam/geocamShare/tree/master/docs/otherOperatingSystems.rst
 
 Set Up an Install Location
 ~~~~~~~~~~~~~~~~~~~~~~~~~~
