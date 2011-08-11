@@ -10,13 +10,15 @@ dependencies of Share under Mac OS X is using `MacPorts`_. After you've
 installed MacPorts, here's a command that installs the more vital
 dependencies::
 
-  sudo port -vn install py26-virtualenv py26-pip git-core sqlite3 jpeg p5-image-exiftool 
+  sudo port -vn install py27-virtualenv py27-pip git-core sqlite3 jpeg p5-image-exiftool 
 
 .. _MacPorts: http://www.macports.org
 
-If you are just starting with Mac Ports, note that that command will
+If you are just starting with MacPorts, note that that command will
 install a massive software stack including both Python and Perl
-interpreters, and could take hours of compilation time.
+interpreters, and could take hours of compilation time. Once you've
+installed it, you will want to make sure ``/opt/local/bin`` is in
+your PATH and you're using the MacPorts Python 2.7 interpreter.
 
 An additional set of dependencies is needed to render the map marker
 icons from SVG source files.  You can either install those dependencies
