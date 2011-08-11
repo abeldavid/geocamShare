@@ -6,7 +6,7 @@
 
 {% if virtualEnvDir %}
 # Activate virtualenv environment
-source {{ virtualEnvDir }}bin/activate
+source {{ virtualEnvDir }}/bin/activate
 {% endif %}
 
 # Set DJANGO_SCRIPT_NAME to the URL prefix for Django on your web server (with leading slash

@@ -10,7 +10,7 @@ import tempfile
 import re
 from django.core.handlers.wsgi import WSGIHandler
 
-def getEnvironmentFromSourceMe(thisDir):
+def getEnvironmentFromSourceMe(thisDir='.'):
     # pick up environment variables from sourceme
     fd, tmp = tempfile.mkstemp('djangoWsgiSourceMe.txt')
     os.close(fd)
