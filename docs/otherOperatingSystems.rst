@@ -11,6 +11,7 @@ installed MacPorts, here's a command that installs the more vital
 dependencies::
 
   sudo port -vn install py27-virtualenv py27-pip git-core sqlite3 jpeg p5-image-exiftool 
+  sudo port select python python27
 
 .. _MacPorts: http://www.macports.org
 
