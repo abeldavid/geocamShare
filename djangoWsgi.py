@@ -10,26 +10,28 @@ import tempfile
 import re
 from django.core.handlers.wsgi import WSGIHandler
 
-def getEnvironmentFromSourceMe(thisDir='.'):
+
+def getEnvironmentFromSourceMe(d='.'):
     # pick up environment variables from sourceme
     fd, tmp = tempfile.mkstemp('djangoWsgiSourceMe.txt')
     os.close(fd)
-    os.system('bash -c "(source %s/sourceme.sh && printenv > %s)"' % (thisDir, tmp))
+    os.system('bash -c "(source %s/sourceme.sh && printenv > %s)"' % (d, tmp))
     varsIn = file(tmp, 'r')
     for line in varsIn:
-        line = line[:-1] # chop final cr
+        line = line[:-1]  # chop final cr
         var, val = line.split('=', 1)
         os.environ[var] = val
     varsIn.close()
     try:
         os.unlink(tmp)
-    except:
+    except OSError:
         pass
 
     # add any new entries from PYTHONPATH to Python's sys.path
-    if os.environ.has_key('PYTHONPATH'):
+    if 'PYTHONPATH' in os.environ:
         envPath = re.sub(':$', '', os.environ['PYTHONPATH'])
         sys.path = envPath.split(':') + sys.path
+
 
 def sendError(start_response, text):
     start_response(text, [('Content-type', 'text/html')])
@@ -39,11 +41,12 @@ def sendError(start_response, text):
 </html>
     """ % (text, text)]
 
+
 def downForMaintenance(environ, start_response):
     import stat
     import time
-    thisDir = os.path.dirname(os.path.realpath(__file__))
-    downFile = os.path.join(thisDir, 'DOWN_FOR_MAINTENANCE')
+    d = os.path.dirname(os.path.realpath(__file__))
+    downFile = os.path.join(d, 'DOWN_FOR_MAINTENANCE')
     downMtime = os.stat(downFile)[stat.ST_MTIME]
     downTimeString = time.strftime('%Y-%m-%d %H:%M %Z', time.localtime(downMtime))
     return sendError(start_response, '503 Down for maintenance since %s' % downTimeString)

@@ -4,11 +4,20 @@
 # All Rights Reserved.
 # __END_LICENSE__
 
+# We normally put Python requirements in the requirements.txt file for
+# each individual app. However, if there are requirements of the site
+# that are not already pulled in by the apps, or things that are not
+# specific to an app (like database backends), they go here.
+
 # This is a pip requirements file
 # http://pip.openplans.org/requirement-format.html
 
 # basic install db backend
 pysqlite
 
-# advanced install db backend
+# advanced install db backend (uncomment)
 # MySQL-python
+
+# needed if you want to check code with manage.py lint
+pylint
+pep8

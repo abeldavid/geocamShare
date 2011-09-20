@@ -4,9 +4,7 @@
 # All Rights Reserved.
 # __END_LICENSE__
 
-import os
-
-from geocamCore.baseSettings import *
+from geocamCore.baseSettings import *  # pylint: disable=W0401
 
 USING_DJANGO_DEV_SERVER = ('runserver' in sys.argv)
 

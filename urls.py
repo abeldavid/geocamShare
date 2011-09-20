@@ -4,7 +4,7 @@
 # All Rights Reserved.
 # __END_LICENSE__
 
-from django.conf.urls.defaults import *
+from django.conf.urls.defaults import include, patterns
 from django.conf import settings
 
 from geocamCore.baseUrls import urlpatterns as basePatterns

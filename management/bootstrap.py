@@ -59,14 +59,15 @@ ACTIONS = (dict(name='gitInitSubmodules',
            )
 ACTION_DICT = dict([(a['name'], a) for a in ACTIONS])
 
+
 def getConfirmation(opts, actionStr):
     if opts.yes:
-        sys.stdout.write(actionStr+'? [Y/n] ')
+        sys.stdout.write(actionStr + '? [Y/n] ')
         print 'y'
         return True
     else:
         while 1:
-            sys.stdout.write(actionStr+'? [Y/n] ')
+            sys.stdout.write(actionStr + '? [Y/n] ')
             response = raw_input().strip().lower()
             if not response:
                 return True
@@ -74,6 +75,7 @@ def getConfirmation(opts, actionStr):
                 return True
             elif response == 'n':
                 return False
+
 
 def dosys(cmd, continueOnError=False):
     if cmd.startswith('sudo'):
@@ -84,25 +86,27 @@ def dosys(cmd, continueOnError=False):
     ret = os.system(cmd)
     if ret != 0:
         if continueOnError:
-            logging.warning('WARNING: Command returned non-zero return value %d' % ret)
+            logging.warning('WARNING: Command returned non-zero return value %d', ret)
         else:
-            logging.error('ERROR: Command returned non-zero return value %d' % ret)
+            logging.error('ERROR: Command returned non-zero return value %d', ret)
             sys.exit(1)
 
+
 def writeFileMakeDir(path, text):
-    dir = os.path.dirname(path)
-    if not os.path.exists(dir):
-        os.makedirs(dir)
+    d = os.path.dirname(path)
+    if not os.path.exists(d):
+        os.makedirs(d)
     f = file(path, 'w')
-    f.write(text+'\n')
+    f.write(text + '\n')
     f.close()
+
 
 def fillTemplate(inputFile, outputFile, context):
     if os.path.exists(outputFile):
-        logging.warning('WARNING: File %s exists, not overwriting. Move current version out of the way to regenerate' % outputFile)
+        logging.warning('WARNING: File %s exists, not overwriting. Move current version out of the way to regenerate', outputFile)
         return
 
-    logging.info('generating %s' % outputFile)
+    logging.info('generating %s', outputFile)
 
     from django.template import Template, Context
     from django.conf import settings
@@ -115,13 +119,16 @@ def fillTemplate(inputFile, outputFile, context):
 ######################################################################
 # ACTION DEFINITIONS
 
+
 def gitInitSubmodules(opts):
     dosys('git submodule init')
     dosys('git submodule update')
 
+
 def gitSubmodulesMasterBranch(opts):
     # avoid "(no branch)"
     dosys('git submodule foreach git checkout master')
+
 
 def linkSubmodules(opts):
     if not os.path.exists('apps'):
@@ -133,10 +140,11 @@ def linkSubmodules(opts):
         relativeSrc = '../%s' % src
         dst = 'apps/%s' % appName
         if os.path.lexists(dst):
-            logging.debug('  %s -> %s skipped (already exists)' % (dst, relativeSrc))
+            logging.debug('  %s -> %s skipped (already exists)', dst, relativeSrc)
         else:
-            logging.debug('  %s -> %s' % (dst, relativeSrc))
+            logging.debug('  %s -> %s', dst, relativeSrc)
             os.symlink(relativeSrc, dst)
+
 
 def hasRequirements(reqsFile):
     for line in file(reqsFile, 'r'):
@@ -144,8 +152,9 @@ def hasRequirements(reqsFile):
             return True
     return False
 
+
 def installRequirements(reqsFile):
-    needSudo = not os.environ.has_key('VIRTUAL_ENV')
+    needSudo = 'VIRTUALENV' not in os.environ
     if needSudo:
         sudoStr = 'sudo '
     else:
@@ -153,17 +162,21 @@ def installRequirements(reqsFile):
     if hasRequirements(reqsFile):
         dosys('%spip install -r %s' % (sudoStr, reqsFile))
     else:
-        logging.info('requirements file %s is empty' % reqsFile)
-    
+        logging.info('requirements file %s is empty', reqsFile)
+
+
 def installSubModuleRequirements(opts):
     for reqs in glob('submodules/*/requirements.txt'):
         installRequirements(reqs)
 
+
 def installSiteRequirements(opts):
     installRequirements('management/siteRequirements.txt')
 
+
 def needSourceme(opts):
     return not os.path.exists(SOURCEME_NAME)
+
 
 def genSourceme(opts):
     fillTemplate('management/templates/%s' % SOURCEME_NAME,
@@ -173,15 +186,18 @@ def genSourceme(opts):
                       appsDir=os.path.abspath('apps')
                       ))
 
+
 def needSettings(opts):
     return not os.path.exists(SETTINGS_NAME)
 
+
 def genSettings(opts):
-    secretKey = ''.join([choice('abcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*(-_=+)') for i in range(50)])
+    secretKey = ''.join([choice('abcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*(-_=+)') for _ in range(50)])
 
     fillTemplate('management/templates/%s' % SETTINGS_NAME,
                  SETTINGS_NAME,
                  dict(secretKey=secretKey))
+
 
 def needAction(opts, action):
     statusFile = STATUS_PATH_TEMPLATE % action['name']
@@ -193,9 +209,10 @@ def needAction(opts, action):
 ######################################################################
 # TOP-LEVEL CODE
 
+
 def doAction(opts, action):
     status = 'NEEDED'
-    
+
     # check if we need to do the action
     neededName = action.get('needed', None)
     if neededName:
@@ -212,16 +229,16 @@ def doAction(opts, action):
 
     if status != 'NEEDED':
         if opts.retry:
-            logging.info('Would skip %s, status is %s, but running in retry mode' % (action['name'], status))
+            logging.info('Would skip %s, status is %s, but running in retry mode', action['name'], status)
         else:
-            logging.info('Skipping step %s, status is %s' % (action['name'], status))
+            logging.info('Skipping step %s, status is %s', action['name'], status)
             return
-    
+
     # confirm with user
-    if (opts.retry or action.has_key('confirm')) and not getConfirmation(opts, action['desc']):
+    if (opts.retry or 'confirm' in action) and not getConfirmation(opts, action['desc']):
         writeFileMakeDir(STATUS_PATH_TEMPLATE % action['name'], 'UNWANTED')
         return
-            
+
     # do the action
     actionFunc = globals()[action['name']]
     actionFunc(opts)
@@ -229,6 +246,7 @@ def doAction(opts, action):
     # mark completion (unless special check function is defined)
     if not neededName:
         writeFileMakeDir(STATUS_PATH_TEMPLATE % action['name'], 'DONE')
+
 
 def doit(opts, args):
     os.chdir(opts.siteDir)
@@ -238,19 +256,21 @@ def doit(opts, args):
 
     logging.basicConfig(level=(logging.WARNING - opts.verbose * 10),
                         format='%(message)s')
-    
+
     if args:
         for arg in args:
             if arg not in ACTION_DICT:
-                print >>sys.stderr, 'ERROR: there is no action %s' % arg
-                print >>sys.stderr, 'Available actions are: %s' % (' '.join([a['name'] for a in ACTIONS]))
+                print >> sys.stderr, 'ERROR: there is no action %s' % arg
+                # suppress bogus pylint warning about redefining name 'a' from outer scope
+                # pylint: disable=W0621
+                print >> sys.stderr, 'Available actions are: %s' % (' '.join([a['name'] for a in ACTIONS]))
                 sys.exit(1)
         actions = [ACTION_DICT[arg] for arg in args]
     else:
         actions = ACTIONS
-    
-    logging.info('Working in %s' % os.getcwd())
-    for action in ACTIONS:
+
+    logging.info('Working in %s', os.getcwd())
+    for action in actions:
         doAction(opts, action)
 
     # mark overall completion
@@ -261,6 +281,7 @@ def doit(opts, args):
     sys.path.insert(0, os.path.dirname(opts.siteDir))
     from geocamShare.djangoWsgi import getEnvironmentFromSourceMe
     getEnvironmentFromSourceMe()
+
 
 def main():
     import optparse

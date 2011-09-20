@@ -7,9 +7,10 @@
 
 from django.contrib.auth.models import User
 
+
 def doit(opts, args):
     for arg in args:
-        username = 'nasa'+arg
+        username = 'nasa' + arg
         numMatches = User.objects.filter(username=username).count()
         if numMatches:
             print 'skipping %s, user exists' % arg
@@ -19,6 +20,7 @@ def doit(opts, args):
         user.first_name = 'Phone ' + arg.upper()
         user.last_name = 'group'
         user.save()
+
 
 def main():
     import optparse

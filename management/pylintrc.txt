@@ -63,22 +63,23 @@ load-plugins=
 #   I0011 = Locally disabling <x>
 
 #   E1103 = Instance of 'x' has no 'y' member (but some types could not be inferred)
+#   R0801 = Similar lines in N files
 
 # Disable the message, report, category or checker with the given id(s). You
 # can either give multiple identifier separated by comma (,) or put this option
 # multiple time (only on the command line, not in the configuration file where
 # it should appear only once).
-disable=W0142,W0403,R0201,W0212,W0613,W0232,R0903,R0904,W0614,C0111,C0301,R0913,C0103,R0914,W0603,R0912,R0915,R0902,F0401,W0402,W0614,C0111,I0011,E1103
+disable=W0142,W0403,R0201,W0212,W0613,W0232,R0903,R0904,W0614,C0111,C0301,R0913,C0103,R0914,W0603,R0912,R0915,R0902,F0401,W0402,W0614,C0111,I0011,E1103,R0801
 
 
 [REPORTS]
 
 # Set the output format. Available formats are text, parseable, colorized, msvs
 # (visual studio) and html
-output-format=text
+output-format=parseable
 
 # Include message's id in output
-include-ids=no
+include-ids=yes
 
 # Put messages in a separate file for each module / package specified on the
 # command line instead of printing them on stdout. Reports (if any) will be
@@ -86,7 +87,7 @@ include-ids=no
 files-output=no
 
 # Tells whether to display a full report or only the messages
-reports=yes
+reports=no
 
 # Python expression which should return a note less than 10 (10 is the highest
 # note). You have access to the variables errors warning, statement which
