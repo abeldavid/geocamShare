@@ -37,13 +37,13 @@ def renameCoreTables():
                   'userprofile_assignments',
                   'userprofile_userPermissions']
     for t in coreTables:
-        cursor.execute("RENAME TABLE `shareCore_%s` TO `geocamCore_%s`;" % (t, t))
+        cursor.execute("RENAME TABLE `shareCore_%s` TO `geocamCore_%s`" % (t, t))
         transaction.commit()
 
 @transaction.commit_manually
 def renamePhotoTable():
     cursor = connection.cursor()
-    cursor.execute("RENAME TABLE `shareGeocam_photo` TO `geocamLens_photo`;")
+    cursor.execute("RENAME TABLE `shareGeocam_photo` TO `geocamLens_photo`")
     transaction.commit()
 
 @transaction.commit_manually
@@ -53,7 +53,7 @@ def renameTrackTables():
                     'resourceposition',
                     'pastresourceposition']
     for t in renameTables:
-        cursor.execute("RENAME TABLE `shareTracking_%s` TO `geocamTrack_%s`;" % (t, t))
+        cursor.execute("RENAME TABLE `shareTracking_%s` TO `geocamTrack_%s`" % (t, t))
         transaction.commit()
 
     # add new fields
@@ -65,16 +65,16 @@ def renameTrackTables():
               "`uuid` varchar(48) NOT NULL"]
     for t in alterTables:
         for field in fields:
-            cursor.execute("ALTER TABLE `geocamTrack_%s` ADD COLUMN %s;" % (t, field))
+            cursor.execute("ALTER TABLE `geocamTrack_%s` ADD COLUMN %s" % (t, field))
             transaction.commit()
 
-    cursor.execute("ALTER TABLE `geocamTrack_resource` ADD COLUMN `extras` longtext NOT NULL;")
+    cursor.execute("ALTER TABLE `geocamTrack_resource` ADD COLUMN `extras` longtext NOT NULL")
     transaction.commit()
 
 @transaction.commit_manually
 def renameLatitudeTable():
     cursor = connection.cursor()
-    cursor.execute("RENAME TABLE `shareLatitude_latitudeprofile` TO `geocamTrack_latitudeprofile`;")
+    cursor.execute("RENAME TABLE `shareLatitude_latitudeprofile` TO `geocamTrack_latitudeprofile`")
     transaction.commit()
 
 @transaction.commit_manually
@@ -99,20 +99,33 @@ def addTracks():
               'geocamTrack_pastresourceposition']
     cursor = connection.cursor()
     for t in tables:
-        cursor.execute('SELECT `id`, `resource_id` FROM `%s`;' % t)
+        cursor.execute('SELECT `id`, `resource_id` FROM `%s`' % t)
         args = [(trackLookup[resource_id], str(uuid.uuid4()), id)
                 for id, resource_id in cursor.fetchall()]
-        cursor.executemany("UPDATE `%s` SET `track_id` = %%s, `uuid` = %%s WHERE `id` = %%s;" % t,
+        cursor.executemany("UPDATE `%s` SET `track_id` = %%s, `uuid` = %%s WHERE `id` = %%s" % t,
                            args)
         transaction.commit()
 
     # mark the track field not null and delete the resource field
     for t in tables:
-        cursor.execute('ALTER TABLE `%s` MODIFY `track_id` int(11) NOT NULL;' % t)
-        cursor.execute('ALTER TABLE `%s` DROP COLUMN `resource_id`;' % t)
+        cursor.execute('ALTER TABLE `%s` MODIFY `track_id` int(11) NOT NULL' % t)
+        cursor.execute('ALTER TABLE `%s` DROP COLUMN `resource_id`' % t)
     transaction.commit()
 
-def migrate():
+@transaction.commit_manually
+def fixResourceUsers():
+    cursor = connection.cursor()
+    cursor.execute("ALTER TABLE `geocamTrack_resource` ADD COLUMN `user_id` int(11) NOT NULL")
+    transaction.commit()
+
+    cursor.execute("UPDATE `geocamTrack_resource`, `auth_user` SET `geocamTrack_resource`.`user_id` = `auth_user`.`id` WHERE `geocamTrack_resource`.`userName` = `auth_user`.`username`")
+    transaction.commit()
+
+    cursor.execute('ALTER TABLE `geocamTrack_resource` DROP COLUMN `userName`')
+    cursor.execute('ALTER TABLE `geocamTrack_resource` DROP COLUMN `displayName`')
+    transaction.commit()
+
+def migrate(opts):
     # back up the database before migrating
     db = settings.DATABASES['default']
     dbName = db['NAME']
@@ -126,13 +139,18 @@ def migrate():
     renameTrackTables()
     renameLatitudeTable()
     os.system('%s/manage.py syncdb' % settings.CHECKOUT_DIR)
+    if opts.production:
+        fixResourceUsers()
     addTracks()
 
 def main():
     import optparse
     parser = optparse.OptionParser('usage: %prog')
+    parser.add_option('--production',
+                      action='store_true', default=False,
+                      help='Use different migration for production db')
     opts, args = parser.parse_args()
-    migrate()
+    migrate(opts)
 
 if __name__ == '__main__':
     main()
