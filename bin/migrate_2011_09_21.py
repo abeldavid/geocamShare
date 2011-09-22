@@ -9,6 +9,15 @@ from django.conf import settings
 from geocamTrack.models import Track, Resource, IconStyle, LineStyle, \
      ResourcePosition, PastResourcePosition
 
+def dosys(cmd, stopOnError=False):
+    print 'running:', cmd
+    ret = os.system(cmd)
+    if ret != 0:
+        print 'warning: command exited with non-zero return value %s' % ret
+        if stopOnError:
+            raise RuntimeError('command failed')
+    return ret
+
 @transaction.commit_manually
 def renameCoreTables():
     cursor = connection.cursor()
@@ -103,6 +112,14 @@ def addTracks():
     transaction.commit()
 
 def migrate():
+    # back up the database before migrating
+    db = settings.DATABASES['default']
+    dbName = db['NAME']
+    dateText = datetime.datetime.now().strftime('%Y_%m_%d')
+    cmd = ('mysqldump --user="%s" --password="%s" %s > %s_%s_migrate.sql'
+           % (db['USER'], db['PASSWORD'], dbName, dateText, dbName))
+    dosys(cmd, stopOnError=True)
+    
     renameCoreTables()
     renamePhotoTable()
     renameTrackTables()
