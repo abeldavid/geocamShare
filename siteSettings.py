@@ -26,3 +26,5 @@ ROOT_URLCONF = 'geocamShare.urls'
 
 # DIGEST_* -- settings for django_digest HTTP digest authentication
 DIGEST_REALM = 'geocamshare.org'
+
+GEOCAM_AWARE_USE_MARKER_CLUSTERING = True
