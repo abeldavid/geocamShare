@@ -7,8 +7,8 @@ import datetime
 from django.db import connection, transaction
 from django.conf import settings
 
-from geocamTrack.models import Track, Resource, IconStyle, LineStyle, \
-     ResourcePosition, PastResourcePosition
+from geocamTrack.models import Track, Resource, IconStyle, LineStyle
+
 
 def dosys(cmd, stopOnError=False):
     print 'running:', cmd
@@ -18,6 +18,7 @@ def dosys(cmd, stopOnError=False):
         if stopOnError:
             raise RuntimeError('command failed')
     return ret
+
 
 @transaction.commit_manually
 def renameCoreTables():
@@ -40,11 +41,13 @@ def renameCoreTables():
         cursor.execute("RENAME TABLE `shareCore_%s` TO `geocamCore_%s`" % (t, t))
         transaction.commit()
 
+
 @transaction.commit_manually
 def renamePhotoTable():
     cursor = connection.cursor()
     cursor.execute("RENAME TABLE `shareGeocam_photo` TO `geocamLens_photo`")
     transaction.commit()
+
 
 @transaction.commit_manually
 def renameTrackTables():
@@ -71,11 +74,13 @@ def renameTrackTables():
     cursor.execute("ALTER TABLE `geocamTrack_resource` ADD COLUMN `extras` longtext NOT NULL")
     transaction.commit()
 
+
 @transaction.commit_manually
 def renameLatitudeTable():
     cursor = connection.cursor()
     cursor.execute("RENAME TABLE `shareLatitude_latitudeprofile` TO `geocamTrack_latitudeprofile`")
     transaction.commit()
+
 
 @transaction.commit_manually
 def addTracks():
@@ -100,8 +105,8 @@ def addTracks():
     cursor = connection.cursor()
     for t in tables:
         cursor.execute('SELECT `id`, `resource_id` FROM `%s`' % t)
-        args = [(trackLookup[resource_id], str(uuid.uuid4()), id)
-                for id, resource_id in cursor.fetchall()]
+        args = [(trackLookup[resource_id], str(uuid.uuid4()), pk)
+                for pk, resource_id in cursor.fetchall()]
         cursor.executemany("UPDATE `%s` SET `track_id` = %%s, `uuid` = %%s WHERE `id` = %%s" % t,
                            args)
         transaction.commit()
@@ -111,6 +116,7 @@ def addTracks():
         cursor.execute('ALTER TABLE `%s` MODIFY `track_id` int(11) NOT NULL' % t)
         cursor.execute('ALTER TABLE `%s` DROP COLUMN `resource_id`' % t)
     transaction.commit()
+
 
 @transaction.commit_manually
 def fixResourceUsers():
@@ -125,6 +131,7 @@ def fixResourceUsers():
     cursor.execute('ALTER TABLE `geocamTrack_resource` DROP COLUMN `displayName`')
     transaction.commit()
 
+
 def migrate(opts):
     # back up the database before migrating
     db = settings.DATABASES['default']
@@ -133,7 +140,7 @@ def migrate(opts):
     cmd = ('mysqldump --user="%s" --password="%s" %s > %s_%s_migrate.sql'
            % (db['USER'], db['PASSWORD'], dbName, dateText, dbName))
     dosys(cmd, stopOnError=True)
-    
+
     renameCoreTables()
     renamePhotoTable()
     renameTrackTables()
@@ -143,13 +150,14 @@ def migrate(opts):
         fixResourceUsers()
     addTracks()
 
+
 def main():
     import optparse
     parser = optparse.OptionParser('usage: %prog')
     parser.add_option('--production',
                       action='store_true', default=False,
                       help='Use different migration for production db')
-    opts, args = parser.parse_args()
+    opts, _args = parser.parse_args()
     migrate(opts)
 
 if __name__ == '__main__':
