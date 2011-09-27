@@ -9,7 +9,6 @@ from django.conf import settings
 
 from geocamTrack.models import Track, Resource, IconStyle, LineStyle
 
-
 def dosys(cmd, stopOnError=False):
     print 'running:', cmd
     ret = os.system(cmd)
