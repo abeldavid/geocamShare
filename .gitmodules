@@ -18,3 +18,6 @@
 [submodule "submodules/geocamFolderWeb"]
 	path = submodules/geocamFolderWeb
 	url = git://github.com/geocam/geocamFolderWeb.git
+[submodule "submodules/geocamMemoWeb"]
+	path = submodules/geocamMemoWeb
+	url = git://github.com/geocam/geocamMemoWeb.git

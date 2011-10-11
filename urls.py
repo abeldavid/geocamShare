@@ -19,6 +19,8 @@ urlpatterns = (basePatterns
     (r'^geocamAware/', include('geocamAware.urls')),
     (r'^geocamLens/', include('geocamLens.urls')),
     (r'^geocamTrack/', include('geocamTrack.urls')),
+    (r'^geocamMemo/', include('geocamMemo.urls')),
+    (r'^geocamTalk/', include('geocamTalk.urls')),
 
     # normally we would put this url in the geocamLens namespace, but 
     # the current version of GeoCam Mobile expects it at the top level

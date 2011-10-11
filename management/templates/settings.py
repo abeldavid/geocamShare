@@ -21,6 +21,8 @@ from siteSettings import *
 # cookie-based authentication mechanism.
 SECRET_KEY = '{{ secretKey }}'
 
+GEOCAM_MEMO_GOOGLE_C2DM_TOKEN = 'fill in your key here -- get from http://code.google.com/android/c2dm/'
+
 # Normally you don't need to set GOOGLE_MAPS_API_KEY, but it is required if
 # you're using the alternate mapping backend based on the Google Earth
 # API.

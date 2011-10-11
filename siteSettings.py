@@ -18,6 +18,9 @@ INSTALLED_APPS = INSTALLED_APPS + (
     'geocamAware',
     'geocamLens',
     'geocamTrack',
+
+    'geocamMemo',
+    'geocamTalk',
     )
 
 # GEOCAM_LENS_VIEW_MODULE = 'xgds_k10.ViewK10'
