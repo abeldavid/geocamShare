@@ -26,9 +26,4 @@ urlpatterns = (basePatterns
     # the current version of GeoCam Mobile expects it at the top level
     (r'^upload-m/$', lensViews.uploadImageAuth,
      {'challenge': 'basic'}),
-
-    (r'^$', 'django.views.generic.simple.redirect_to',
-     {'url': settings.SCRIPT_NAME + 'geocamAware/',
-      'readOnly': True}
-     ),
 ))
