@@ -18,6 +18,7 @@ from geocamUtil.management.commandUtil import getSiteDir
 # importing baseSettings
 DEFAULT_CHECKOUT_DIR = getSiteDir()
 CHECKOUT_DIR = os.environ.get('CHECKOUT_DIR', DEFAULT_CHECKOUT_DIR)
+PROJ_ROOT = os.path.abspath(os.path.dirname(__file__))
 
 SCRIPT_NAME = os.environ['DJANGO_SCRIPT_NAME']
 if not SCRIPT_NAME.endswith('/'):
@@ -74,11 +75,6 @@ MEDIA_ROOT = '%s/build/media/' % CHECKOUT_DIR
 # Examples: "http://media.lawrence.com", "http://example.com/media/"
 MEDIA_URL = SCRIPT_NAME + 'media/'
 
-# URL prefix for admin media -- CSS, JavaScript and images. Make sure to use a
-# trailing slash.  Must not be the same as MEDIA_URL!
-# Examples: "http://foo.com/media/", "/media/".
-ADMIN_MEDIA_PREFIX = SCRIPT_NAME + 'media/admin/'
-
 # List of callables that know how to import templates from various sources.
 TEMPLATE_LOADERS = (
     'django.template.loaders.filesystem.Loader',
@@ -113,9 +109,21 @@ TEMPLATE_DIRS = (
 )
 
 INSTALLED_APPS = (
-    'geocamUtil',
-    'geocamFolder',
+    'geocamAware',
+    'geocamLens',
+    'geocamTrack',
+    'geocamMemo',
+    'geocamTalk',
+    'geocamCover',
+
     'geocamCore',
+    'geocamFolder',
+    'geocamUtil',
+
+    'tagging',
+    'taggit',
+    'django_digest',
+
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
@@ -123,13 +131,13 @@ INSTALLED_APPS = (
     'django.contrib.admin',
     'django.contrib.admindocs',
     'django.contrib.comments',
-    'tagging',
-    'django_digest',
 )
 
 AUTH_PROFILE_MODULE = 'geocamCore.UserProfile'
 
 LOGIN_URL = SCRIPT_NAME + 'accounts/login/'
+LOGOUT_URL = SCRIPT_NAME + 'accounts/logout/'
+LOGIN_DEFAULT_NEXT_URL = SCRIPT_NAME + 'geocamAware/'
 
 CACHE_BACKEND = 'locmem://?timeout=30'
 
@@ -157,11 +165,6 @@ DIGEST_ENFORCE_NONCE_COUNT = False
 #    'HIDE_DJANGO_SQL': False,
 #}
 
-######################################################################
-# The remaining settings are ones we define that are generically
-# useful across different geocam apps.  See geocamCore/defaultSettings
-# for stuff that is more specific to geocamCore.
-
 USE_STATIC_SERVE = USING_DJANGO_DEV_SERVER
 
 GEOCAM_UTIL_SECURITY_ENABLED = not USING_DJANGO_DEV_SERVER
@@ -172,6 +175,10 @@ DATA_URL = '%sdata/' % SCRIPT_NAME
 TMP_DIR = '%stmp/' % DATA_DIR
 TMP_URL = '%stmp/' % DATA_URL
 
+STATIC_ROOT = os.path.join(PROJ_ROOT, 'build', 'static', '')
+STATIC_URL = SCRIPT_NAME + 'static/'
+ADMIN_MEDIA_PREFIX = STATIC_URL + 'admin/'
+
 LOGIN_REDIRECT_URL = SCRIPT_NAME + 'geocamAware/'
 
 USING_DJANGO_DEV_SERVER = ('runserver' in sys.argv)
@@ -180,16 +187,6 @@ ADMINS = (
     ('Trey Smith', 'info@geocamshare.org'),
 )
 MANAGERS = ADMINS
-
-# django settings overrides for geocamDisasterStyle
-INSTALLED_APPS = INSTALLED_APPS + (
-    'geocamAware',
-    'geocamLens',
-    'geocamTrack',
-
-    'geocamMemo',
-    'geocamTalk',
-    )
 
 # GEOCAM_LENS_VIEW_MODULE = 'xgds_k10.ViewK10'
 
@@ -200,3 +197,5 @@ DIGEST_REALM = 'geocamshare.org'
 
 GEOCAM_AWARE_USE_MARKER_CLUSTERING = True
 GEOCAM_AWARE_USE_LAYER_MANAGER = True
+
+GEOCAM_UTIL_INSTALLER_USE_SYMLINKS = True

@@ -21,3 +21,6 @@
 [submodule "submodules/geocamMemoWeb"]
 	path = submodules/geocamMemoWeb
 	url = git://github.com/geocam/geocamMemoWeb.git
+[submodule "submodules/geocamCoverWeb"]
+	path = submodules/geocamCoverWeb
+	url = git://github.com/geocam/geocamCoverWeb.git
